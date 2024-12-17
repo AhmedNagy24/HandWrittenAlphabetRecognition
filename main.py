@@ -52,13 +52,13 @@ print("Confusion Matrix (Non Linear Kernel):\n", conf_matrix_non_linear)
 print("Average F1 Score (Non Linear Kernel):", f1_score_non_linear)
 
 # Split the training dataset into training and validation datasets.
-size_of_validation = int(len(features_training) * 0.8)
+size_of_validation = int(len(features_training) * 0.9)
 
-features_train = features[:size_of_validation]
-features_valid = features[size_of_validation:]
+features_train = features_training[:size_of_validation]
+features_valid = features_training[size_of_validation:]
 
-targets_train = targets[:size_of_validation]
-targets_valid = targets[size_of_validation:]
+targets_train = targets_training[:size_of_validation]
+targets_valid = targets_training[size_of_validation:]
 
 # Third experiment (You can use TensorFlow):
 # Design 2 Neural Networks (with different number of hidden layers, neurons, activations, etc.)
@@ -68,10 +68,10 @@ model1.add(Dense(128, input_dim=784, activation='relu'))  # 128 neurons, input l
 model1.add(Dense(26, activation='softmax'))  # 26 output neurons (A-Z)
 
 # Compile the model
-model1.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+model1.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
 
 # Train the model
-history1 = model1.fit(features_training, targets_train, epochs=10, batch_size=32, validation_data=(features_valid, targets_valid))
+history1 = model1.fit(features_train, targets_train, epochs=3, batch_size=32, validation_data=(features_valid, targets_valid))
 
 # Second Neural Network: More complex with two hidden layers
 model2 = tensorflow.keras.models.Sequential()
@@ -80,10 +80,10 @@ model2.add(Dense(128, activation='relu'))  # 128 neurons in second hidden layer
 model2.add(Dense(26, activation='softmax'))  # 26 output neurons (A-Z)
 
 # Compile the model
-model2.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+model2.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
 
 # Train the model
-history2 = model2.fit(features_training, targets_train, epochs=10, batch_size=32, validation_data=(features_valid, targets_valid))
+history2 = model2.fit(features_train, targets_train, epochs=3, batch_size=32, validation_data=(features_valid, targets_valid))
 
 # Evaluate the models on the test set
 
@@ -106,13 +106,13 @@ targets_pred2 = model2.predict(features_testing)
 targets_pred2 = numpy.argmax(targets_pred2, axis=1)
 
 # Confusion Matrix for Model 1
-conf_matrix1 = confusion_matrix(numpy.argmax(targets_testing, axis=1), targets_pred1)
-f1_score1 = f1_score(numpy.argmax(targets_testing, axis=1), targets_pred1, average='weighted')
+conf_matrix1 = confusion_matrix(targets_testing, targets_pred1)
+f1_score1 = f1_score(targets_testing, targets_pred1, average='weighted')
 print("\nConfusion Matrix (Model 1):\n", conf_matrix1)
 print("Average F1 Score (Model 1):", f1_score1)
 
 # Confusion Matrix for Model 2
-conf_matrix2 = confusion_matrix(numpy.argmax(targets_testing, axis=1), targets_pred2)
-f1_score2 = f1_score(numpy.argmax(targets_testing, axis=1), targets_pred2, average='weighted')
+conf_matrix2 = confusion_matrix(targets_testing, targets_pred2)
+f1_score2 = f1_score(targets_testing, targets_pred2, average='weighted')
 print("\nConfusion Matrix (Model 2):\n", conf_matrix2)
 print("Average F1 Score (Model 2):", f1_score2)
